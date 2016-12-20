@@ -1283,10 +1283,10 @@ You can call fetch_sequence using the following shortcuts:
 #
 sub fetch_sequence {
   my $self = shift;
-  my ($seqid,$start,$end,$class,$bioseq) = rearrange([['NAME','SEQID','SEQ_ID'],
-						      'START',['END','STOP'],'CLASS','BIOSEQ'],@_);
+  my ($seqid,$start,$end,$class,$bioseq,$strand) = rearrange([['NAME','SEQID','SEQ_ID'],
+						      'START',['END','STOP'],'CLASS','BIOSEQ','STRAND'],@_);
   $seqid = "$seqid:$class" if defined $class;
-  my $seq = $self->seq($seqid,$start,$end);
+  my $seq = $self->seq($seqid,$start,$end,$strand);
   return $seq unless $bioseq;
 
   require Bio::Seq unless Bio::Seq->can('new');
@@ -2044,9 +2044,9 @@ sub _fetch_sequence    { shift->throw_not_implemented }
 
 sub seq {
     my $self     = shift;
-    my ($seq_id,$start,$end) = @_;
+    my ($seq_id,$start,$end,$strand) = @_;
     if (my $a = $self->dna_accessor) {
-	return $a->can('seq')           ? $a->seq($seq_id,$start,$end)
+	return $a->can('seq')           ? $a->seq($seq_id,$start,$end,$strand)
 	      :$a->can('fetch_sequence')? $a->fetch_sequence($seq_id,$start,$end)
           : undef;
     }

@@ -165,15 +165,15 @@ sub seq {
   my $self = shift;
 
   require Bio::PrimarySeq unless Bio::PrimarySeq->can('new');
-
+  my $strand = $self->strand;
   my ($start,$end) = ($self->start,$self->end);
-  if ($self->strand < 0) {
-    ($start,$end) = ($end,$start);
-  }
+  #if ($strand < 0) {
+  #  ($start,$end) = ($end,$start);
+  #}
 
   if (my $store = $self->object_store) {
-    return Bio::PrimarySeq->new(-seq => $store->fetch_sequence($self->seq_id,$start,$end) || '',
-				-id  => $self->display_name);
+    my $seq = $store->fetch_sequence(-seq_id=>$self->seq_id,-start=>$start,-end=>$end,-strand=>$strand);
+    return Bio::PrimarySeq->new(-seq => $seq  || '', -id  => $self->display_name); #store->fetch_sequence($self->seq_id,$start,$end)
   } else {
       return $self->SUPER::seq($self->seq_id,$start,$end);
   }
